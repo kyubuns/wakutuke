@@ -16,8 +16,15 @@ fi
 
 set -e
 target_image=$1
-convert -geometry 256x256 ${target_image} tmp1.png
-conver waku.png tmp1.png -gravity center -composite output.png
+eval $(identify -format 'width=%w; height=%h' $target_image)
+if [ $width -lt $height ]; then
+  size='174'
+else
+  size='x174'
+fi
+
+convert -geometry $size -gravity center -extent 174x174 ${target_image} tmp1.png
+convert waku.png tmp1.png -gravity northwest -geometry +28+23 -composite output.png
 
 convert output.png waku.png -composite output.png
 rm tmp1.png
