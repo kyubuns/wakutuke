@@ -17,7 +17,7 @@ fi
 set -e
 target_image=$1
 convert -geometry 256x256 ${target_image} tmp1.png
-conver waku.png tmp1.png -gravity center -composite output.png
+convert waku.png tmp1.png -gravity center -composite output.png
 
 convert output.png waku.png -composite output.png
 rm tmp1.png
