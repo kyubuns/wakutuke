@@ -1,12 +1,23 @@
 #!/bin/bash
 
-if [ $# -ne 1 ]; then
-  echo "引数は入力ファイル名だけやで！"
-  exit 1
-fi
+case $# in
+  1)
+    out_image="output.png"
+    ;;
+  2)
+    out_image=$2
+    ;;
+  *)
+    echo "引数はこんな感じやで！"
+    echo "  $0 infile.png"
+    echo "  $0 infile.png output.png"
+    echo "出力ファイルを省略するとoutput.pngになるで！"
+    exit 1
+    ;;
+esac
 
-if [ -e output.png ]; then
-  echo "output.pngが既にあります！"
+if [ -e $out_image ]; then
+  echo "${out_image}が既にあるで！"
   exit 1
 fi
 
@@ -23,10 +34,12 @@ else
   size='x174'
 fi
 
-convert -geometry $size -gravity center -extent 174x174 ${target_image} tmp1.png
-convert waku.png tmp1.png -gravity northwest -geometry +28+23 -composite output.png
+tmp_image=$(/bin/mktemp /tmp/waku.XXXXXX)
+trap "rm -f ${tmp_image}" EXIT
 
-convert output.png waku.png -composite output.png
-rm tmp1.png
-echo "枠ついた！"
+convert -geometry $size -gravity center -extent 174x174 ${target_image} ${tmp_image}
+convert waku.png ${tmp_image} -gravity northwest -geometry +28+23 -composite ${out_image}
+
+convert ${out_image} waku.png -composite ${out_image}
+echo "枠ついたで！"
 exit 0
